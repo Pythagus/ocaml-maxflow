@@ -1,0 +1,5 @@
+*.cmo
+*.cmi
+_build/
+*.native
+outfile
