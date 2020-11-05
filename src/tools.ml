@@ -1,5 +1,10 @@
 open Graph
 
-(* assert false is of type ∀α.α, so the type-checker is happy. *)
-let clone_nodes gr = assert false
+let clone_nodes gr =
+  let func current id = Graph.new_node current id in
+  Graph.n_fold gr func (Graph.empty_graph)
+
+
 let gmap gr f = assert false
+
+let add_arc gr from vers value = Graph.empty_graph 
