@@ -7,8 +7,10 @@ let clone_nodes gr =
 
 let gmap gr f =
   let func current from dest lbl =
-    let new_lbl = f lbl in
-    Graph.new_arc current from dest new_lbl in
+    Graph.new_arc current from dest (f lbl) in
   Graph.e_fold gr func (clone_nodes gr)
 
-let add_arc gr from dest value = Graph.empty_graph 
+let add_arc gr from dest n =
+  match (Graph.find_arc gr from dest) with
+    | Some lbl -> Graph.new_arc gr from dest (lbl + n)
+    | None -> Graph.new_arc gr from dest n
