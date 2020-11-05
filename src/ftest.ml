@@ -25,9 +25,10 @@ let () =
   let graph = from_file infile in
 
   (* Rewrite the graph that has been read. *)
-  let () = let result = Tools.clone_nodes graph in
-  write_file outfile result in
-
-  ()
+  let () =
+  let f = (fun lbl -> string_of_int ((int_of_string lbl) + 1)) in
+    let result = Tools.gmap graph f in
+    write_file outfile result in
+    ()
 
 
