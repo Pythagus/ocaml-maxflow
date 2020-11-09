@@ -26,8 +26,10 @@ let () =
 
   (* Rewrite the graph that has been read. *)
   let () =
-    let michel = Tools.gmap graph int_of_string in
+    (*let michel = Tools.gmap graph int_of_string in
     let result = Tools.add_arc michel 3 0 32 in
     let jacky = Tools.gmap result string_of_int in
-    write_file outfile jacky in
+    write_file outfile jacky in*)
+
+    export outfile graph in
     ()
