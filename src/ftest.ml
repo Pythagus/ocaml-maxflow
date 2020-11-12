@@ -13,7 +13,6 @@ let () =
 
 
   (* Arguments are : infile(1) source-id(2) sink-id(3) outfile(4) *)
-  
   let infile = Sys.argv.(1)
   and outfile = Sys.argv.(4)
   
@@ -27,16 +26,8 @@ let () =
 
   (* Rewrite the graph that has been read. *)
   let () =
-    let rec print_path = function
-      | None -> Printf.printf "Aucun chemin trouvé\n%!"
-      | Some [] -> ()
-      | Some ((from, dest, (flow, capacity)) :: tail) ->
-        Printf.printf "De %d vers %d (%d / %d)\n%!" from dest flow capacity;
-        print_path (Some tail)
-    in
-    
-    let int_graph = Tools.gmap graph int_of_string in
-    let flow_graph = Tools.gmap int_graph (fun lbl -> (0, lbl)) in
+    let flow_graph = Tools.gmap graph (fun lbl -> (0, int_of_string lbl)) in
 
-    print_path (Ford.dfs flow_graph _source _sink) in
+    let print_label = (fun (flow, capacity) -> Printf.printf "(%d / %d)" flow capacity) in
+    Ford.print_path print_label (Ford.dfs flow_graph _source _sink) in
     ()

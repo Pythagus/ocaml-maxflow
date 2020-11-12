@@ -2,6 +2,19 @@ open Graph
 
 type 'b path = (Graph.id * Graph.id * 'b) list
 
+(* Afficher un chemin *)
+ let rec print_path print_label = function
+      | None -> Printf.printf "No path found\n%!"
+      | Some [] -> ()
+      | Some ((from, dest, lbl) :: tail) ->
+        Printf.printf "-> From %d to %d " from dest ;
+        print_label lbl ;
+        Printf.printf "\n%!" ;
+        print_path print_label (Some tail)
+
+
+(* Executer l'algorithme DFS pour trouver un chemin *)
+(* entre source et sink *)
 let dfs graph source sink =
     let rec loop current visited_nodes path =
         if current = sink
@@ -16,20 +29,6 @@ let dfs graph source sink =
             in inner_loop (Graph.out_arcs graph current)
     in
     loop source [] []
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
