@@ -1,5 +1,6 @@
 open Gfile
 open Tools
+open Ford
     
 let () =
 
@@ -26,10 +27,16 @@ let () =
 
   (* Rewrite the graph that has been read. *)
   let () =
-    (*let michel = Tools.gmap graph int_of_string in
-    let result = Tools.add_arc michel 3 0 32 in
-    let jacky = Tools.gmap result string_of_int in
-    write_file outfile jacky in*)
+    let rec print_path = function
+      | None -> Printf.printf "Aucun chemin trouvé\n%!"
+      | Some [] -> ()
+      | Some ((from, dest, (flow, capacity)) :: tail) ->
+        Printf.printf "De %d vers %d (%d / %d)\n%!" from dest flow capacity;
+        print_path (Some tail)
+    in
+    
+    let int_graph = Tools.gmap graph int_of_string in
+    let flow_graph = Tools.gmap int_graph (fun lbl -> (0, lbl)) in
 
-    export outfile graph in
+    print_path (Ford.dfs flow_graph _source _sink) in
     ()

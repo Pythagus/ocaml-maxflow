@@ -1,13 +1,47 @@
 open Graph
 
-let fulkerson graph from dest =
+type 'b path = (Graph.id * Graph.id * 'b) list
+
+let dfs graph source sink =
+    let rec loop current visited_nodes path =
+        if current = sink
+        then Some path
+        else
+            let rec inner_loop = function
+                | [] -> None
+                | (dest, (flow, capacity)) :: tail ->
+                    if (flow < capacity)
+                    then loop dest (current :: visited_nodes) ((current, dest, (flow, capacity)) :: path)
+                    else inner_loop tail
+            in inner_loop (Graph.out_arcs graph current)
+    in
+    loop source [] []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(*
+let fulkerson input_graph source sink =
     (* Initialiser les flots *)
     let f g from dest lbl = Graph.new_arc g from dest (0 * lbl) in
-    let g = Graph.e_fold graph f Graph.empty_graph in
+    let flow_graph = Graph.e_fold input_graph f Graph.empty_graph in
 
     (* Tant que l'on trouve un chemin possible *)
-        (* Initialiser variable chemin à NULL *)
-        (* Initialiser variable flot maximum du chemin à 0 *)
+        (* Initialiser variable chemin à [] *)
+        (* Initialiser variable flot maximum du chemin à +inf *)
 
         (* Tant que l'on trouve un arc possible chez ses enfants *)
             (* Ajouter l'arc au chemin *)
@@ -18,20 +52,42 @@ let fulkerson graph from dest =
         (* Modifier le flot maximal du graphe *)
     (* *)
 
-    let rec loop_find_arc current path =
-        let iter_f from dest (flow * capacity) = 
+    let rec dfs from used_nodes result =
+        if from = sink
+        then result
+        else
+            let voisin = (* trouver voisin non utilisé*) in
+            dfs voisin (voisin :: used_nodes) (arc :: result)
+
+(*
+    let rec loop_find_arc current used_arcs =
+        let iter_f (path * max_flow) from dest (flow * capacity) = 
             if (from = current) && (flow < capacity)
             then 
                 (* Faire attention aux boucles *)
-                loop_find_arc dest ((from * dest * (flow * capacity)) :: path) ;
-            else
-                if (dest = current) && (flow > 0)
-                then 
-                    (* Faire attention aux boucles *)
-                    loop_find_arc from ((from * dest * (flow * capacity)) :: path) ;
-
-        Graph.e_iter g iter_f ;
+                let new_max_flow = min max_flow (capacity - flow) in
+                let new_path = ((from * dest * (flow * capacity)) :: path) in
+                
+                if (dest = sink)
+                then (new_path * new_max_flow)
+                else
+                    let (new_path * new_max_flow) = loop_find_arc dest in
+                    let final_path = estrser in
+                    let final_max_flow = min max_flow new_max_flow in
+                    (final_path * final_max_flow)
+            else if (dest = current) && (flow > 0)
+            then 
+                (* Faire attention aux boucles *)
+                let new_max_flow = min max_flow flow in
+                let new_path = ((from * dest * (flow * capacity)) :: path) in
+                if (from = sink) (* Peut-être inutile *)
+                then (new_path * new_max_flow)
+                else loop_find_arc from ;
+        Graph.e_fold flow_graph iter_f ([] * (int_of_float infinity));
     in
+        let (path * max_flow) = loop_find_arc source in
+    
 
     loop from
     ()
+*)*)
