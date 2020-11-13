@@ -26,8 +26,11 @@ let () =
 
   (* Rewrite the graph that has been read. *)
   let () =
-    let flow_graph = Tools.gmap graph (fun lbl -> (0, int_of_string lbl)) in
+    let int_graph = Tools.gmap graph int_of_string in
 
-    let print_label = (fun (flow, capacity) -> Printf.printf "(%d / %d)" flow capacity) in
-    Ford.print_path print_label (Ford.dfs flow_graph _source _sink) in
-    ()
+    let (max_flow, g) = Ford.fulkerson int_graph _source _sink in
+    Printf.printf "Flow max : %d\n%!" max_flow ;
+
+    let string_of_label (flow, cap) = (string_of_int flow) ^ " / " ^ (string_of_int cap) in
+    export outfile (Tools.gmap g string_of_label) 
+  in ()

@@ -20,3 +20,6 @@ demo: build
 clean:
 	-rm -rf _build/
 	-rm ftest.native
+
+svg:
+	dot -Tsvg outfile > graph.svg

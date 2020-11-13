@@ -4,3 +4,4 @@ _build/
 *.native
 outfile
 node_modules/
+graph.svg
