@@ -47,4 +47,10 @@ let e_iter gr f = List.iter (fun (id1, out) -> List.iter (fun (id2, x) -> f id1 
 
 let e_fold gr f acu = List.fold_left (fun acu (id1, out) -> List.fold_left (fun acu (id2, x) -> f acu id1 id2 x) acu out) acu gr
 
-
+let inout_arcs gr id =
+  let p acc from dest lbl =
+    if from = id || dest = id
+    then ((from, dest, lbl) :: acc)
+    else acc
+  in
+  e_fold gr p []

@@ -26,11 +26,30 @@ let () =
 
   (* Rewrite the graph that has been read. *)
   let () =
-    let int_graph = Tools.gmap graph int_of_string in
+    (*
+    let print_arc (from, dest, lbl) =
+      Printf.printf "%d -> %d (%s)\n%!" from dest lbl
+    in
+    let arcs = Graph.inout_arcs graph _source in
+    List.iter print_arc arcs;
+    *)
+    let print_lbl (flow, cap) = Printf.printf "(%d / %d)" flow cap in
 
+    let int_graph = Tools.gmap graph int_of_string in
+    (*
+    let flow_graph = Tools.gmap int_graph (fun lbl -> (lbl, lbl)) in
+
+    let result = Ford.dfs flow_graph _source _sink in
+    match result with
+      | None -> Printf.printf "Pas de chemin trouvé"
+      | Some (flow, path) -> Printf.printf "Chemin de flot %d :\n%!" flow;
+        Ford.print_path print_lbl path;
+    *)
+    
     let (max_flow, g) = Ford.fulkerson int_graph _source _sink in
     Printf.printf "Flow max : %d\n%!" max_flow ;
 
     let string_of_label (flow, cap) = (string_of_int flow) ^ " / " ^ (string_of_int cap) in
-    export outfile (Tools.gmap g string_of_label) 
+    export outfile (Tools.gmap g string_of_label)
+    
   in ()

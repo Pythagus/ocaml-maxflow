@@ -24,8 +24,8 @@ let dfs graph source sink =
         else
             let rec inner_loop = function
                 | [] -> None
-                | (dest, (flow, capacity)) :: tail ->
-                    if (flow < capacity) && not(List.exists (fun node -> node = dest) visited_nodes)
+                | (from, dest, (flow, capacity)) :: tail ->
+                    if (from = current) && (flow < capacity) && not(List.exists (fun node -> node = dest) visited_nodes)
                     then 
                         let next_iter = loop dest (current :: visited_nodes) ((current, dest, (flow, capacity)) :: path) in
                         let arc_flow  = capacity - flow in
@@ -36,8 +36,20 @@ let dfs graph source sink =
                         match next_iter new_max_flow with
                             | None -> inner_loop tail
                             | Some x -> Some x
+                    else if (dest = current) && (flow > 0) && not(List.exists (fun node -> node = from) visited_nodes)
+                    then
+                        let next_iter = loop from (current :: visited_nodes) ((from, dest, (flow, capacity)) :: path) in
+                        let arc_flow = flow in
+                        let new_max_flow = match max_flow with
+                            | None -> Some arc_flow
+                            | Some flow -> Some (min flow arc_flow) in
+                        
+                        match next_iter new_max_flow with
+                            | None -> inner_loop tail
+                            | Some x -> Some x
                     else inner_loop tail
-            in inner_loop (Graph.out_arcs graph current)
+            in
+                inner_loop (Graph.inout_arcs graph current)
     in loop source [] [] None
 
 
@@ -63,9 +75,16 @@ let fulkerson input_graph source sink =
             | None -> (max_flow, loop_graph)
             | Some (path_flow, path) ->
                 (* We may use fold *)
-                let rec inner_loop graph = function
+                Printf.printf "Chemin de flot %d :\n%!" path_flow;
+                print_path (fun (flow, cap) -> Printf.printf "(%d / %d)" flow cap) path;
+                let rec inner_loop graph current = function
                     | [] -> loop graph (max_flow + path_flow)
                     | (from, dest, (flow, capacity)) :: rest ->
-                        inner_loop (Graph.new_arc graph from dest (flow + path_flow, capacity)) rest
-                in inner_loop loop_graph path
+                        if from = current
+                        then inner_loop (Graph.new_arc graph from dest (flow + path_flow, capacity)) dest rest
+                        else if dest = current
+                        then inner_loop (Graph.new_arc graph from dest (flow - path_flow, capacity)) from rest
+                        else failwith "le chemin il est bizarre"
+
+                in inner_loop loop_graph source path
     in loop flow_graph 0
