@@ -1,0 +1,5 @@
+% Impossible avec un arc plein
+% - Remplir le flot de l'arc
+n 0 0
+n 0 0
+e 0 1 1

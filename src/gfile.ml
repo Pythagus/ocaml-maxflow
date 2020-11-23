@@ -18,24 +18,24 @@ type path = string
 
  *)
 
-
+(* Génère un fichier dot *)
 let export path graph =
   (* Open a write-file. *)
   let ff = open_out path in
 
-(* Set the graph properties *)
-fprintf ff "digraph my_graph {\n" ;
-fprintf ff "rankdir=LR;\n" ;
-fprintf ff "size=\"8,5\"\n" ;
-fprintf ff "node [shape = circle];\n" ;
+  (* Set the graph properties *)
+  fprintf ff "digraph my_graph {\n" ;
+  fprintf ff "rankdir=LR;\n" ;
+  fprintf ff "size=\"8,5\"\n" ;
+  fprintf ff "node [shape = circle];\n" ;
 
-(* Add all arcs *)
-e_iter graph (fun from dest lbl -> fprintf ff "%d -> %d [ label = \"%s\" ];\n" from dest lbl) ;
+  (* Add all arcs *)
+  e_iter graph (fun from dest lbl -> fprintf ff "%d -> %d [ label = \"%s\" ];\n" from dest lbl) ;
 
-fprintf ff "}\n" ;
+  fprintf ff "}\n" ;
 
-close_out ff ;
-()
+  close_out ff ;
+  ()
 
 
 

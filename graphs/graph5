@@ -1,0 +1,5 @@
+% Possible avec 1 arc vide
+% - Laisser l'arc vide
+n 0 0
+n 0 0
+e 0 1 1

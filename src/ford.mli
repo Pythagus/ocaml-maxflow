@@ -1,5 +1,7 @@
 open Graph
 
+exception Ford_error of string
+
 (* Un chemin est une liste d'arc, un arc c'est (from * dest * lbl) *)
 type 'a path = (Graph.id * Graph.id * 'a) list
 

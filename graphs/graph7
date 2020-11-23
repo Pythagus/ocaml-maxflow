@@ -1,0 +1,13 @@
+% Possible, moins simple, de 0 vers 5
+% - Laisser les arcs vides
+n 0 0
+n 1 1
+n 2 2
+n 3 3
+n 4 4
+n 5 5
+e 0 1 1
+e 2 3 1
+e 0 2 1
+e 2 4 1
+e 3 5 1

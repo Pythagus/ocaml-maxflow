@@ -1,0 +1,10 @@
+% Possible avec 3 arcs vides de 0 vers 3
+% - Laisser les arcs vides
+
+n 0 0
+n 1 1
+n 2 2
+n 3 3
+e 0 1 1
+e 1 2 1
+e 2 3 1

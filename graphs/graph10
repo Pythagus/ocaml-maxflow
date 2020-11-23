@@ -1,0 +1,13 @@
+% Possible, moins simple, avec des arcs à l'envers, de 0 vers 5
+% - Remplir les arcs 2 <- 4 et 2 <- 3
+n 0 0
+n 1 1
+n 2 2
+n 3 3
+n 4 4
+n 5 5
+e 0 1 1
+e 0 2 1
+e 3 2 1
+e 4 2 1
+e 3 5 1

@@ -1,0 +1,5 @@
+% Possible avec un arc plein à l'envers, de 0 vers 1
+% - Remplir l'arc
+n 0 0
+n 1 1
+e 1 0 1
