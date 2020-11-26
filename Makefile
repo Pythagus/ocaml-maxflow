@@ -11,11 +11,9 @@ format:
 edit:
 	code . -n
 
-demo: build
+test: build
 	@echo "\n==== EXECUTING ====\n"
-	./ftest.native graphs/graph1 $(src) $(dest) outfile
-	@echo "\n==== RESULT ==== (content of outfile) \n"
-	@cat outfile
+	./ftest.native
 
 clean:
 	-rm -rf _build/
