@@ -27,7 +27,9 @@ let export path graph =
   fprintf ff "digraph my_graph {\n" ;
   fprintf ff "rankdir=LR;\n" ;
   fprintf ff "size=\"8,5\"\n" ;
-  fprintf ff "node [shape = circle];\n" ;
+  fprintf ff "node [shape = circle]; " ;
+
+  n_iter graph (fun id -> fprintf ff "%d " id) ;
 
   (* Add all arcs *)
   e_iter graph (fun from dest lbl -> fprintf ff "%d -> %d [ label = \"%s\" ];\n" from dest lbl) ;
