@@ -1,0 +1,5 @@
+digraph my_graph {
+rankdir=LR;
+size="8,5"
+node [shape = circle]; 0 1 0 -> 1 [ label = "1 / 1" ];
+}

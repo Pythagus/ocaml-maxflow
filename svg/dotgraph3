@@ -1,0 +1,4 @@
+digraph my_graph {
+rankdir=LR;
+size="8,5"
+node [shape = circle]; 1 0 }
