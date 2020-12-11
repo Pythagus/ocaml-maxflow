@@ -19,13 +19,16 @@ type id = int
   
 type id_person = id * person
 
+let source = 0
+let sink = 1
+
 (* Reads a line with a hacker. *)
 let read_hacker id hlist line =
   let test_input name sp br ed =
-    let error_message = "read_hacker (" ^ name ^ ")" in
-    let spaces = if sp = "spaces" then true else if sp = "tabs" then false else failwith error_message in
-    let braces = if br = "inline" then true else if br = "newline" then false else failwith error_message in
-    let editor = if ed = "emacs" then true else if ed = "vim" then false else failwith error_message in
+    let error_message = "read_hacker (" ^ name ^ "): " in
+    let spaces = if sp = "spaces" then true else if sp = "tabs" then false else failwith (error_message ^ "spaces") in
+    let braces = if br = "inline" then true else if br = "newline" then false else failwith (error_message ^ "braces") in
+    let editor = if ed = "emacs" then true else if ed = "vim" then false else failwith (error_message ^ "editor") in
     (id, Hacker (name, spaces, braces, editor)) :: hlist
   in
   try Scanf.sscanf line "Hacker %s %s %s %s" test_input
@@ -36,13 +39,13 @@ let read_hacker id hlist line =
 (* Reads a line with a student. *)
 let read_student id slist line =
   let test_input name beds sp br ed =
-    let error_message = "read_student (" ^ name ^ ")" in
+    let error_message = "read_student (" ^ name ^ "): " in
     let spaces = if sp = "whatever" then None
-                 else if sp = "spaces" then Some true else if sp = "tabs" then Some false else failwith "spaces" in
+                 else if sp = "spaces" then Some true else if sp = "tabs" then Some false else failwith (error_message ^ "spaces") in
     let braces = if br = "whatever" then None
-                 else if br = "inline" then Some true else if br = "newline" then Some false else (Printf.printf "%s/%s/%s\n%!" sp br ed; failwith "braces") in
+                 else if br = "inline" then Some true else if br = "newline" then Some false else failwith (error_message ^ "braces") in
     let editor = if ed = "whatever" then None
-                 else if ed = "emacs" then Some true else if ed = "vim" then Some false else failwith "editor" in
+                 else if ed = "emacs" then Some true else if ed = "vim" then Some false else failwith (error_message ^ "editor") in
     (id, Student (name, beds, spaces, braces, editor)) :: slist
   in
   try Scanf.sscanf line "Student %s %d %s %s %s" test_input
@@ -77,13 +80,15 @@ let from_file path =
     with End_of_file -> (hlist, slist) (* Done *)
   in
 
+  let (hlist, slist) = input_loop 2 ([], []) in
+  close_in infile ;
+  (List.rev hlist, List.rev slist)
+
+let generate_input_graph hlist slist =
+
   let graph = Graph.empty_graph in
-  let source = 0 in
-  let sink = 1 in
   let graph = Graph.new_node graph source in (* Source *)
   let graph = Graph.new_node graph sink in (* Sink *)
-
-  let (hlist, slist) = input_loop 2 ([], []) in
 
   let add_hacker g (id, hack) =
     let g = Graph.new_node g id in
@@ -127,12 +132,57 @@ let from_file path =
       loop new_g studs hacks
   in
 
-  let final_graph = loop graph slist hlist in
-  
-  close_in infile ;
-  final_graph
+  loop graph slist hlist
 
-let input_graph = from_file "convention.txt"
-let flow_graph = Tools.gmap input_graph (fun lbl -> (0, lbl))
-let string_of_label (flow, cap) = (string_of_int flow) ^ " / " ^ (string_of_int cap);;
-Gfile.export "outfile" (Tools.gmap flow_graph string_of_label)
+let write_output stream maxflow result_graph id_hackers_list id_students_list =
+  let rec loop = function
+    | [] -> Printf.fprintf stream "\n%d/%d hackers hosted\n" maxflow (List.length id_hackers_list)
+    | idhack :: idhacks ->
+      let rec inner_loop idhack = function
+        | [] -> loop idhacks;
+        | idstud :: idstuds ->
+          let (hid, Hacker (hname, _, _, _)) = idhack in
+          let (sid, Student (sname, _, _, _, _)) = idstud in
+          match Graph.find_arc result_graph hid sid with
+            | None -> inner_loop idhack idstuds
+            | Some (flow, cap) ->
+              if flow = 1
+              then (Printf.fprintf stream "%s sleeps at %s's\n" hname sname; loop idhacks;)
+              else (inner_loop idhack idstuds)
+      in
+      inner_loop idhack id_students_list
+  in
+  loop id_hackers_list
+
+let () =
+  if Array.length Sys.argv <= 1 || Array.length Sys.argv >= 4 then
+    begin
+      Printf.printf "Usage: %s <input_file> [output_file]\n%!" Sys.argv.(0) ;
+      exit 1
+    end ;
+  
+  let input_file = Sys.argv.(1) in
+
+  let (id_hackers_list, id_students_list) = from_file input_file in
+  let input_graph = generate_input_graph id_hackers_list id_students_list in
+
+  (*
+  let flow_graph = Tools.gmap input_graph (fun lbl -> (0, lbl)) in
+  let string_of_flow_label (flow, cap) = (string_of_int flow) ^ " / " ^ (string_of_int cap) in
+  Gfile.export "input_graph" (Tools.gmap flow_graph string_of_flow_label) ;
+  *)
+
+  let (maxflow, result_graph) = Ford.fulkerson input_graph 0 1 in
+  (* Gfile.export "output_graph" (Tools.gmap result_graph string_of_flow_label) ; *)
+
+  let prepared_write_output stream = write_output stream maxflow result_graph id_hackers_list id_students_list in
+
+  let () =
+    if Array.length Sys.argv = 2
+    then prepared_write_output stdout
+    else
+      let file = open_out Sys.argv.(2) in
+      prepared_write_output file ;
+      close_out file
+  in
+  ()
