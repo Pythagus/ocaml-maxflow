@@ -10,6 +10,17 @@ Then open VSCode in the root directory of this repository (command line: `code p
 Our `Graph.fulkerson` implementation has been tested with several tests you can run by yourself executing `make test`. This is the exhaustive tests list you can find in the `src/ftest.ml` file:
 
 
+#### Test Tools.clone_nodes (graph1)
+This tries to clone the `graph1` nodes into a `cloned_graph`. Then, It checks whether there is a node in the initial graph that is not present in the cloned graph (because the mapped graph is "cast" in the `map_test` function).
+
+
+#### Test Tools.gmap (graph1)
+This tries to convert the `int` graph to a `string` graph. If the compiler doesn't throw exception, the test passed.
+
+#### Test Tools.add_arc (graph1)
+This tries to add 5 to the arc's max flow between two nodes (that maybe didn't exist before the test). Then, we check whether the label was correctly updated.
+
+
 #### Test Ford.dfs (graph3)
 It tests the DFS algorithm on an **impossible** case : there are no arcs in the graph.
 
@@ -40,11 +51,29 @@ It tests the DFS algorithm on a **possible** case : there is a valid path from 0
 ![File svg/dotgraph7.svg](svg/dotgraph7.svg)
 
 
-
 #### Test Ford.dfs (graph8)
 It tests the DFS algorithm on a **possible** case : there is a valid path from 0 to 1 (0 -> 1). It tests the availability of a reversed arc.
 
 ![File svg/dotgraph8.svg](svg/dotgraph8.svg)
+
+
+#### Test Ford.dfs (graph9)
+It tests the DFS algorithm on a **possible** case : there is a valid path from 0 to 3 (0 -> 1 -> 2 -> 3) using only reversed arcs.
+
+![File svg/dotgraph9.svg](svg/dotgraph9.svg)
+
+
+#### Test Ford.dfs (graph10)
+It tests the DFS algorithm on a **possible** case : there is a valid path from 0 to 5 (0 -> 2 -> 3 -> 5) using reversed and normal arcs.
+
+![File svg/dotgraph10.svg](svg/dotgraph10.svg)
+
+
+#### Test Ford.fulkerson (graph11)
+It tests the Ford-Fulkerson algorithm. The graph's max flow is 25.
+
+![File svg/dotgraph11.svg](svg/dotgraph11.svg)
+
 
 ### Graph.inout_arcs
 The `Graph` package now includes a `inout_arcs` function returning the list of all arcs into or out the given node id. This function is used by the `Graph.dfs` function to get all the arcs connecting the given node to the rest of the graph. This is important to get the arcs coming to the node for the `fulkerson` algorithm.
