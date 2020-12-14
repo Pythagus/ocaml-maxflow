@@ -16,8 +16,6 @@ type hacker = name * are_spaces_better * are_inline_braces_better * is_emacs_bet
 type student = name * nb_of_beds * spaces_preferece * braces_preference * editor_preference 
 
 type id = int
-  
-type 'a id_hacker = id * 'a
 
 let source = 0
 let sink = 1
