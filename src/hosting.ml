@@ -12,12 +12,12 @@ type editor_preference = is_emacs_better option
     
 type nb_of_beds = int
   
-type person = Hacker of name * are_spaces_better * are_inline_braces_better * is_emacs_better
-            | Student of name * nb_of_beds * spaces_preferece * braces_preference * editor_preference 
+type hacker = name * are_spaces_better * are_inline_braces_better * is_emacs_better
+type student = name * nb_of_beds * spaces_preferece * braces_preference * editor_preference 
 
 type id = int
   
-type id_person = id * person
+type 'a id_hacker = id * 'a
 
 let source = 0
 let sink = 1
@@ -29,7 +29,7 @@ let read_hacker id hlist line =
     let spaces = if sp = "spaces" then true else if sp = "tabs" then false else failwith (error_message ^ "spaces") in
     let braces = if br = "inline" then true else if br = "newline" then false else failwith (error_message ^ "braces") in
     let editor = if ed = "emacs" then true else if ed = "vim" then false else failwith (error_message ^ "editor") in
-    (id, Hacker (name, spaces, braces, editor)) :: hlist
+    (id, (name, spaces, braces, editor)) :: hlist
   in
   try Scanf.sscanf line "Hacker %s %s %s %s" test_input
   with e ->
@@ -46,7 +46,7 @@ let read_student id slist line =
                  else if br = "inline" then Some true else if br = "newline" then Some false else failwith (error_message ^ "braces") in
     let editor = if ed = "whatever" then None
                  else if ed = "emacs" then Some true else if ed = "vim" then Some false else failwith (error_message ^ "editor") in
-    (id, Student (name, beds, spaces, braces, editor)) :: slist
+    (id, (name, beds, spaces, braces, editor)) :: slist
   in
   try Scanf.sscanf line "Student %s %d %s %s %s" test_input
   with e ->
@@ -99,7 +99,7 @@ let generate_input_graph hlist slist =
 
   let add_student g (id, stud) =
     let g = Graph.new_node g id in
-    let Student (_, beds, _, _, _) = stud in
+    let (_, beds, _, _, _) = stud in
     Graph.new_arc g id sink beds
   in
 
@@ -111,8 +111,8 @@ let generate_input_graph hlist slist =
         | None -> true
         | Some s_elt -> h_elt = s_elt
     in 
-    let Hacker (_, h_sp, h_br, h_ed) = hack in
-    let Student (_, _, s_sp, s_br, s_ed) = stud in
+    let (_, h_sp, h_br, h_ed) = hack in
+    let (_, _, s_sp, s_br, s_ed) = stud in
     (helper h_sp s_sp) && (helper h_br s_br) && (helper h_ed s_ed)
   in
 
@@ -141,8 +141,8 @@ let write_output stream maxflow result_graph id_hackers_list id_students_list =
       let rec inner_loop idhack = function
         | [] -> loop idhacks;
         | idstud :: idstuds ->
-          let (hid, Hacker (hname, _, _, _)) = idhack in
-          let (sid, Student (sname, _, _, _, _)) = idstud in
+          let (hid, (hname, _, _, _)) = idhack in
+          let (sid, (sname, _, _, _, _)) = idstud in
           match Graph.find_arc result_graph hid sid with
             | None -> inner_loop idhack idstuds
             | Some (flow, cap) ->
