@@ -1,5 +1,7 @@
 src?=1
 dest?=2
+hosting?=hostings/hosting1
+outfile?=
 
 build:
 	@echo "\n==== COMPILING ====\n"
@@ -18,6 +20,13 @@ test: build
 clean:
 	-rm -rf _build/
 	-rm ftest.native
+	-rm hosting.native
 
 svg:
 	dot -Tsvg outfile > graph.svg
+
+hosting:
+	@echo "\n==== COMPILING ====\n"
+	ocamlbuild hosting.native
+	@echo "\n==== EXECUTING ====\n"
+	./hosting.native ${hosting} ${outfile}

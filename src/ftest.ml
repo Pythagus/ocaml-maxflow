@@ -123,15 +123,4 @@ let () =
     let string_of_label (flow, cap) = (string_of_int flow) ^ " / " ^ (string_of_int cap) in
     Gfile.export outfile (Tools.gmap g string_of_label)
     *)
-
-    (*
-    TODO:
-    Readme.md :
-      - comment on a fait l'algo
-      - justifier Graph.inout_arcs
-      - lister les tests (avec des jolis graphes)
-      - comment tester (on a changé le Makefile)
-
-    Medium project peut-être
-    *)
   in ()
